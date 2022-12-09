@@ -10,35 +10,20 @@ data "aws_ami" "amazon2" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-}
 
-resource "aws_instance" "web-test" {
-  for_each                = toset(var.int_names)
-  ami                     = data.aws_ami.amazon2.id
-  instance_type           = var.int_type
-  disable_api_termination = var.disable_api_termination
-  user_data               = file("./files/userdata.sh")
-  key_name                = "ChaveServidor"
-  root_block_device {
-    volume_size = 10
-    volume_type = "gp2"
-  }
-
-  tags = {
-    Name = each.key
-  }
+  owners = ["137112412989"]
 }
 
 resource "aws_security_group" "test_sg" {
   name   = "sgservertest"
-  vpc_id = "vpc-038a96a45cc7e0a92"
+  vpc_id = var.vpc_id
 
   ingress {
     description      = "HTTPS"
     from_port        = 443
     to_port          = 443
     protocol         = "tcp"
-    cidr_blocks      = ["177.155.206.82/32"]
+    cidr_blocks      = [var.ipv4_cidr_blocks]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -47,7 +32,7 @@ resource "aws_security_group" "test_sg" {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = ["177.155.206.82/32"]
+    cidr_blocks      = [var.ipv4_cidr_blocks]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -56,7 +41,7 @@ resource "aws_security_group" "test_sg" {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["177.155.206.82/32"]
+    cidr_blocks      = [var.ipv4_cidr_blocks]
     ipv6_cidr_blocks = ["::/0"]
   }
 
@@ -73,13 +58,31 @@ resource "aws_security_group" "test_sg" {
   }
 }
 
+resource "aws_instance" "web-test" {
+  for_each                = toset(var.int_names)
+  ami                     = data.aws_ami.amazon2.id
+  instance_type           = var.int_type
+  disable_api_termination = var.disable_api_termination
+  user_data               = file("./files/userdata.sh")
+  vpc_security_group_ids  = [aws_security_group.test_sg.id]
+  key_name                = var.key_name
+  root_block_device {
+    volume_size = 10
+    volume_type = "gp2"
+  }
+
+  tags = {
+    Name = each.key
+  }
+}
+
 resource "aws_s3_bucket" "s3-kassio-test" {
   bucket = "kassio99-test"
   acl    = "private"
 }
 
 resource "aws_sqs_queue" "terraform_test" {
-  name                      = "terraform--queue"
+  name                      = "terraform-server-test"
   delay_seconds             = 90
   max_message_size          = 2048
   message_retention_seconds = 86400

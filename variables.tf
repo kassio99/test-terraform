@@ -28,3 +28,16 @@ variable "amis" {
     "us-east-2" = "ami-0568773882d492fc8"
   }
 }
+
+variable "ipv4_cidr_blocks" {
+  default = "177.155.206.82/32"
+}
+
+variable "key_name" {
+  default = "ChaveServidor"
+}
+
+variable "vpc_id" {
+  default = "vpc-038a96a45cc7e0a92"
+  #default = ["${module.vpc.instance_ids}"]
+}
