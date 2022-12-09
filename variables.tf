@@ -36,3 +36,7 @@ variable "ipv4_cidr_blocks" {
 variable "key_name" {
   default = "ChaveServidor"
 }
+
+variable "vpc_id" {
+  default = "vpc-038a96a45cc7e0a92"
+}
