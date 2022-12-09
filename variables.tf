@@ -28,3 +28,7 @@ variable "amis" {
     "us-east-2" = "ami-0568773882d492fc8"
   }
 }
+
+variable "ipv4_cidr_blocks" {
+  default = "177.155.206.82/32"
+}
