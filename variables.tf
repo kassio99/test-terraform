@@ -32,3 +32,7 @@ variable "amis" {
 variable "ipv4_cidr_blocks" {
   default = "177.155.206.82/32"
 }
+
+variable "key_name" {
+  default = "ChaveServidor"
+}

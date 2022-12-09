@@ -14,23 +14,6 @@ data "aws_ami" "amazon2" {
   owners = ["137112412989"]
 }
 
-resource "aws_instance" "web-test" {
-  for_each                = toset(var.int_names)
-  ami                     = data.aws_ami.amazon2.id
-  instance_type           = var.int_type
-  disable_api_termination = var.disable_api_termination
-  user_data               = file("./files/userdata.sh")
-  key_name                = "ChaveServidor"
-  root_block_device {
-    volume_size = 10
-    volume_type = "gp2"
-  }
-
-  tags = {
-    Name = each.key
-  }
-}
-
 resource "aws_security_group" "test_sg" {
   name   = "sgservertest"
   vpc_id = "vpc-038a96a45cc7e0a92"
@@ -72,6 +55,24 @@ resource "aws_security_group" "test_sg" {
 
   tags = {
     Name = "sgservertest"
+  }
+}
+
+resource "aws_instance" "web-test" {
+  for_each                = toset(var.int_names)
+  ami                     = data.aws_ami.amazon2.id
+  instance_type           = var.int_type
+  disable_api_termination = var.disable_api_termination
+  user_data               = file("./files/userdata.sh")
+  security_groups         = ["sgservertest"]
+  key_name                = var.key_name
+  root_block_device {
+    volume_size = 10
+    volume_type = "gp2"
+  }
+
+  tags = {
+    Name = each.key
   }
 }
 
