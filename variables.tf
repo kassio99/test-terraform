@@ -39,4 +39,5 @@ variable "key_name" {
 
 variable "vpc_id" {
   default = "vpc-038a96a45cc7e0a92"
+  #default = ["${module.vpc.instance_ids}"]
 }

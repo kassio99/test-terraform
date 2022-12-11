@@ -64,7 +64,7 @@ resource "aws_instance" "web-test" {
   instance_type           = var.int_type
   disable_api_termination = var.disable_api_termination
   user_data               = file("./files/userdata.sh")
-  security_groups         = [resource.aws_security_group.test_sg.name]
+  vpc_security_group_ids  = [aws_security_group.test_sg.id]
   key_name                = var.key_name
   root_block_device {
     volume_size = 10
