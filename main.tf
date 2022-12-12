@@ -16,7 +16,7 @@ data "aws_ami" "amazon2" {
 
 resource "aws_security_group" "test_sg" {
   name   = "sgservertest"
-  vpc_id = "vpc-038a96a45cc7e0a92"
+  vpc_id = var.vpc_id
 
   ingress {
     description      = "HTTPS"
@@ -64,7 +64,7 @@ resource "aws_instance" "web-test" {
   instance_type           = var.int_type
   disable_api_termination = var.disable_api_termination
   user_data               = file("./files/userdata.sh")
-  security_groups         = ["sgservertest"]
+  vpc_security_group_ids  = [aws_security_group.test_sg.id]
   key_name                = var.key_name
   root_block_device {
     volume_size = 10
